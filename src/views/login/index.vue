@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import local from '@/utils/local'
 export default {
   data () {
     const checkMobile = (rule, value, callBack) => {
@@ -60,27 +61,50 @@ export default {
     }
   },
   methods: {
+    // 这个是原版
+    // login () {
+    //   // 对整个表单进行验证给登录按钮的事件
+    //   this.$refs['loginForm'].validate(valid => {
+    //     if (valid) {
+    //       // 验证成功 进行登录(发请求)
+    //       // 这里要看文档
+    //       // authorizations文档最后的地址文档里的内容正好等于上边的loginform
+    //       // post(url ,参数对象)
+    //       // get(url,{params:参数对象})新的方式,更方便
+    //       // .then是结束
+    //       // catch风格检查
+    //       this.$http
+    //         .post('authorizations', this.Loginform)
+    //         .then(res => {
+    //           // 成功 就跳转首页面
+    //           // 成功 res是响应对象 res.data是响应主体
+    //           // 保存用户信息(token)
+    //           local.setUser(res.data.data)
+    //           this.$router.push('/')
+    //         })
+    //         .catch(() => {
+    //           // 失败 提示信息$message elementui提供的
+    //           this.$message.error('手机号或验证码错误')
+    //         })
+    //     }
+    //   })
+    // }
+
+    // 改进版 (如果出现异常??怎么处理??)
     login () {
-      // 对整个表单进行验证给登录按钮的事件
-      this.$refs['loginForm'].validate(valid => {
+      // 对整个表单进行校验
+      this.$refs['loginForm'].validate(async valid => {
         if (valid) {
-          // 验证成功 进行登录(发请求)
-          // 这里要看文档
-          // authorizations文档最后的地址文档里的内容正好等于上边的loginform
-          // post(url ,参数对象)
-          // get(url,{params:参数对象})新的方式,更方便
-          // .then是结束
-          // catch风格检查
-          this.$http
-            .post('authorizations', this.Loginform)
-            .then(res => {
-              // 成功 就跳转首页面
-              this.$router.push('/')
-            })
-            .catch(() => {
-              // 失败 提示信息$message elementui提供的
-              this.$message.error('手机号或验证码错误')
-            })
+          // 一下代码可能出现异常(报错) 使用try{可能保存的代码}catch(e){处理错误}
+          try {
+            const {
+              data: { data }
+            } = await this.$http.post('authorizations', this.Loginform)
+            local.setUser(data)
+            this.$router.push('/')
+          } catch (e) {
+            this.$message.error('手机号或验证码错误')
+          }
         }
       })
     }

@@ -9,6 +9,10 @@ import 'element-ui/lib/theme-chalk/index.css'
 import router from '@/router'
 
 import axios from '@/api'
+// import myBread from '@/components/my-bread'
+// Vue.component('my-bread', myBread)
+import plugin from '@/components'
+Vue.use(plugin)
 
 Vue.use(ElementUI)
 
@@ -21,3 +25,7 @@ new Vue({
   router,
   render: h => h(App)
 }).$mount('#app')
+
+// main.js的作用是入口文件
+// 职责1:创建一个根实例
+// 职责2:复杂全局范围的依赖导入
